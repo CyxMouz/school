@@ -1,19 +1,23 @@
 const bcrypt = require("bcrypt");
 const db = require("../models");
 const Room = db.room;
-
+const School = db.school;
 exports.create = async (req, res) => {
+  let name = req.body.name;
+  let schoolId = req.body.schoolId;
   try {
-    await Room.create(req.body)
+    const room = await Room.create({ name });
+    const school = await School.findByPk(req.schoolId);
+    await school
+      .addRoom(room)
       .then((data) => {
-        if (data) res.status(200).json({ message: "Room created" });
-        else res.sendStatus(403);
+        res.status(200).json(data);
       })
       .catch((err) => {
-        res.status(400).json(err.name);
+        res.status(401).send(err);
       });
   } catch (error) {
-    res.json(error.name);
+    res.sendStatus(500);
   }
 };
 exports.update = async (req, res) => {

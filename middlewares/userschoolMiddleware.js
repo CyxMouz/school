@@ -1,48 +1,57 @@
 const db = require("../models");
 const user_schoolmanager = db.user_schoolmanager;
 const user_school = db.user_school;
-
-exports.isUserSchoolExist = async (req, res, next) => {
-  // verifier le user s'il exist
-};
-exports.isIdSchoolExist = async (req, res, next) => {};
-exports.isUserExist = async (req, res, next) => {};
+const user_student = db.user_student;
+const User = db.user;
+const School = db.school;
 exports.isTypeUserCorrect = async (req, res, next) => {
-  // verifier le type user ["student","teacher","manager"]
-  if (userId && schoolId) {
-    if (
-      req.body.type === "student" ||
-      req.body.type === "teacher" ||
-      req.body.type === "manager" ||
-      req.body.type === "parent"
-    ) {
-      if (req.body.type === "student") {
-        next();
-      }
-      if (req.body.type === "teacher") {
-        next();
-      }
-      if (req.body.type === "manager") {
-        next();
-      }
-      if (req.body.type === "parentr") {
-        next();
-      }
-    } else {
-      res.send("please specify type of user");
-    }
+  if (
+    req.body.type === "student" ||
+    req.body.type === "teacher" ||
+    req.body.type === "manager" ||
+    req.body.type === "parent"
+  ) {
+    next();
   } else {
-    res.send("please give valid informations");
+    res.status(400).send("please specify type of user");
   }
 };
-exports.isNotUserSchool = async (req, res, next) => {
+exports.isSchoolUser = async (req, res, next) => {
   await user_school
-    .findOne({ schoolId: req.body.schoolId, userId: req.body.userId })
+    .findOne({ where: { userId: req.userId }, include: School })
     .then((data) => {
-      if (data !== null) {
+      if (req.params.schoolId == data.school.id) {
+        req.schoolId = req.params.schoolId;
         next();
       } else {
-        res.status(401).send("this user belongs already to this school");
+        res.sendStatus(400);
       }
+    })
+    .catch(() => {
+      res.sendStatus(404);
     });
+
+  // await user.getUser_schools().then((data) => {
+  //   console.log(data);
+  // });
+};
+
+exports.isOwner = async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.userId },
+    })
+      .then((user) => {
+        if (user.id == req.params.id) {
+          next();
+        } else {
+          res.sendStatus(404);
+        }
+      })
+      .catch((err) => {
+        res.sendStatus(404);
+      });
+  } catch (error) {
+    res.sendStatus(500);
+  }
 };

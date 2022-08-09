@@ -5,10 +5,10 @@ module.exports = (app) => {
   const authJWT = require("../middlewares/authJWT");
   var router = require("express").Router();
 
-  router.post("/", homeworks.create),
+  router.post("/cours/:coursId", homeworks.create),
     router.put("/:id", homeworks.update),
     router.get("/:id", homeworks.findOne),
     router.get("/", homeworks.findAll),
     router.delete("/:id", homeworks.delete);
-  app.use("/api/homeworks", router);
+  app.use("/api/school/:schoolId/homeworks", router);
 };

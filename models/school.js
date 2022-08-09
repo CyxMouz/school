@@ -43,21 +43,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       fix: {
         type: DataTypes.STRING,
-        validate: {
-          isNumeric: { msg: "only numbers allowed" },
-        },
       },
       fax: {
         type: DataTypes.STRING,
-        validate: {
-          isNumeric: { msg: "only numbers allowed" },
-        },
       },
       phone: {
         type: DataTypes.STRING,
-        validate: {
-          isNumeric: { msg: "only numbers allowed" },
-        },
       },
     },
     {

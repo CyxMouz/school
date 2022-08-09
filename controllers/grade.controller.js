@@ -1,19 +1,24 @@
 const bcrypt = require("bcrypt");
 const db = require("../models");
 const Grade = db.grade;
-
+const School = db.school;
 exports.create = async (req, res) => {
+  let name = req.body.name;
+  let schoolId = req.body.schoolId;
   try {
-    await Grade.create(req.body)
+    const grade = await Grade.create({ name });
+    const school = await School.findByPk(req.schoolId);
+
+    await school
+      .addGrade(grade)
       .then((data) => {
-        if (data) res.status(200).json({ message: "Grade created" });
-        else res.sendStatus(403);
+        res.status(200).json(data);
       })
       .catch((err) => {
-        res.status(400).json(err.name);
+        res.status(401).send(err);
       });
   } catch (error) {
-    res.json(error.name);
+    res.sendStatus(500);
   }
 };
 exports.update = async (req, res) => {

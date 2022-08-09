@@ -1,17 +1,28 @@
 const bcrypt = require("bcrypt");
 const db = require("../models");
+const Cours = db.cours;
 const Homework = db.homework;
 
 exports.create = async (req, res) => {
   try {
-    await Homework.create(req.body)
-      .then((data) => {
-        if (data) res.status(200).json({ message: "Homework created" });
-        else res.sendStatus(403);
+    let c = await Cours.findByPk(req.params.coursId);
+    if (c !== null) {
+      await Homework.create({
+        name: req.body.name,
+        description: req.body.description,
+        date: req.body.date,
+        courId: c.id,
       })
-      .catch((err) => {
-        res.status(400).json(err.name);
-      });
+        .then((data) => {
+          if (data) res.status(200).json({ message: "Homework created" });
+          else res.sendStatus(403);
+        })
+        .catch((err) => {
+          res.status(400).json(err.name);
+        });
+    } else {
+      res.sendStatus(404);
+    }
   } catch (error) {
     res.json(error.name);
   }

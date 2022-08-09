@@ -8,7 +8,7 @@ const refreshTokens = db.refreshToken;
 exports.login = async (req, res) => {
   const user = {
     username: req.body.username,
-    password: req.body.passowrd,
+    password: req.body.password,
   };
 
   const createAccessToken = new Promise((resolve, reject) => {

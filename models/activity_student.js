@@ -14,13 +14,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   activity_student.init(
     {
-      userStudentId: {
-        type: DataTypes.INTEGER,
+      id: {
+        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-      },
-      activityId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
       },
     },
     {

@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
         res.status(400).json(err.name);
       });
   } catch (error) {
-    res.json(error.name);
+    res.sendStatus(500);
   }
 };
 exports.update = async (req, res) => {
@@ -21,11 +21,11 @@ exports.update = async (req, res) => {
     await School.update(req.body, { where: { id: req.params.id } }).then(
       (data) => {
         if (data == 1) res.status(200).json({ message: "School updated" });
-        else res.sendStatus(500);
+        else res.sendStatus(404);
       }
     );
   } catch (error) {
-    res.json(error.name);
+    res.sendStatus(500);
   }
 };
 exports.findOne = async (req, res) => {
@@ -35,21 +35,19 @@ exports.findOne = async (req, res) => {
     },
   })
     .then((data) => {
-      if (data) res.status(200).json(data);
-      else res.sendStatus(404);
+      res.status(200).json(data);
     })
     .catch((err) => {
-      res.json(err.name);
+      res.sendStatus(500);
     });
 };
 exports.findAll = async (req, res) => {
   await School.findAll()
     .then((school) => {
-      if (school) res.status(200).json(school);
-      else res.sendStatus(404);
+      res.status(200).json(school);
     })
     .catch((err) => {
-      res.json(err.name);
+      res.sendStatus(500);
     });
 };
 exports.delete = async (req, res) => {
@@ -61,6 +59,6 @@ exports.delete = async (req, res) => {
       else res.sendStatus(501);
     })
     .catch((error) => {
-      res.json(error.name);
+      res.sendStatus(500);
     });
 };

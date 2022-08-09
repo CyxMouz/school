@@ -1,19 +1,24 @@
 const bcrypt = require("bcrypt");
 const db = require("../models");
 const Session = db.session;
-
+const School = db.school;
 exports.create = async (req, res) => {
+  let name = req.body.name;
+  let schoolId = req.body.schoolId;
   try {
-    await Session.create(req.body)
+    const session = await Session.create({ name });
+    const school = await School.findByPk(req.schoolId);
+
+    await school
+      .addSession(session)
       .then((data) => {
-        if (data) res.status(200).json({ message: "Session created" });
-        else res.sendStatus(403);
+        res.status(200).json(data);
       })
       .catch((err) => {
-        res.status(400).json(err.name);
+        res.status(401).send(err);
       });
   } catch (error) {
-    res.json(error.name);
+    res.sendStatus(500);
   }
 };
 exports.update = async (req, res) => {

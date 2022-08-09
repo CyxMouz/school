@@ -1,19 +1,25 @@
 const bcrypt = require("bcrypt");
 const db = require("../models");
 const Food = db.food;
+const School = db.school;
 
 exports.create = async (req, res) => {
+  let name = req.body.name;
+  let schoolId = req.body.schoolId;
   try {
-    await Food.create(req.body)
+    const food = await Food.create({ name });
+    const school = await School.findByPk(req.schoolId);
+
+    await school
+      .addFood(food)
       .then((data) => {
-        if (data) res.status(200).json({ message: "Food created" });
-        else res.sendStatus(403);
+        res.status(200).json(data);
       })
       .catch((err) => {
-        res.status(400).json(err.name);
+        res.status(401).send(err);
       });
   } catch (error) {
-    res.json(error.name);
+    res.sendStatus(500);
   }
 };
 exports.update = async (req, res) => {
